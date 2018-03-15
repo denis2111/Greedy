@@ -23,26 +23,45 @@ public class GameController : MonoBehaviour {
 
 	void Update(){
 		if (gameStarted){
-			if (Input.touchCount > 0){
-				Touch touch = Input.GetTouch(0);
-				switch (touch.phase){
-					case TouchPhase.Began:
-						Debug.Log("Began");
-						direction = Vector2.zero;
-						startPos = touch.position;
-						break;
-
-					case TouchPhase.Moved:
-						direction = touch.position - startPos;
-						break;
-
-					case TouchPhase.Ended:
-						break;
-				}
-			}
-			if (direction.magnitude>touchSensitivity)
-				playerController.changeDirection(direction);	
+			phoneController();
+			PCController();			
 		}
+	}
+
+	void PCController(){
+		if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
+			playerController.changeDirection(PlayerController.direction.North);
+		
+		if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
+			playerController.changeDirection(PlayerController.direction.East);	
+		
+		if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
+			playerController.changeDirection(PlayerController.direction.South);
+		
+		if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
+			playerController.changeDirection(PlayerController.direction.West);
+	}
+
+	void phoneController(){
+		if (Input.touchCount > 0){
+			Touch touch = Input.GetTouch(0);
+			switch (touch.phase){
+				case TouchPhase.Began:
+					Debug.Log("Began");
+					direction = Vector2.zero;
+					startPos = touch.position;
+					break;
+
+				case TouchPhase.Moved:
+					direction = touch.position - startPos;
+					break;
+
+				case TouchPhase.Ended:
+					break;
+			}
+		}
+		if (direction.magnitude>touchSensitivity)
+			playerController.changeDirection(direction);
 	}
 
 	public void startButtonClick(){
@@ -68,7 +87,8 @@ public class GameController : MonoBehaviour {
 						grid.destroy(nextPosition);
 						grid.move(playerController.pos, nextPosition);
 						playerController.move(nextPosition, grid.gridPosToRealPos(nextPosition));
-						grid.add(GameObject.Instantiate(cherry.GetComponent<VisualObject>()), grid.getRandomEmptyCell());
+						List<Grid.gridPos> ignoredPositions = Grid.gridPos.getRange(playerController.pos - new Grid.gridPos(1,1), playerController.pos + new Grid.gridPos(1,1));
+						grid.add(GameObject.Instantiate(cherry.GetComponent<VisualObject>()), grid.getRandomEmptyCell(ignoredPositions));
 						break;
 
 					case "Brick":

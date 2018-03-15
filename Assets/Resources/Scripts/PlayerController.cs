@@ -49,7 +49,7 @@ public class PlayerController : MonoBehaviour {
 			}
 			image.sprite = sprite[spriteType];
 			Debug.Log(curentDirectionInt);
-			image.gameObject.GetComponent<RectTransform>().localEulerAngles = new Vector3(0,0,-curentDirectionInt * 90);
+			image.gameObject.GetComponent<RectTransform>().localEulerAngles = new Vector3(curentDirectionInt == 3 ? 180 : 0, 0, -curentDirectionInt * 90);
 		};
 	}
 	
@@ -71,7 +71,7 @@ public class PlayerController : MonoBehaviour {
 			spriteType = 1-spriteType;
 			image.sprite = sprite[spriteType];
 			Debug.Log(curentDirectionInt);
-			image.gameObject.GetComponent<RectTransform>().localEulerAngles = new Vector3(0,0,-curentDirectionInt * 90);
+			image.gameObject.GetComponent<RectTransform>().localEulerAngles = new Vector3(curentDirectionInt == 3 ? 180 : 0, 0, -curentDirectionInt * 90);
 		}
 
 		gameObject.GetComponent<RectTransform>().localPosition = position;
@@ -112,6 +112,10 @@ public class PlayerController : MonoBehaviour {
 		nextPosition = realPos;
 	}
 
+	public void changeDirection(direction newDirection){
+		curentDirection = newDirection;
+	}
+
 	public void changeDirection(Vector2 newDirection){
 		direction lastDirection = curentDirection;
 		if (Mathf.Abs(newDirection.x) > Mathf.Abs(newDirection.y)){
@@ -143,17 +147,11 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void loadSprites(){
-		sprite[0] = Resources.Load<Sprite>("Materials/Android-N");
-		sprite[1] = Resources.Load<Sprite>("Materials/Android2-N");
-		/*sprite[0,1] = Resources.Load<Sprite>("Materials/Android-E");
-		sprite[1,1] = Resources.Load<Sprite>("Materials/Android2-E");
-		sprite[0,2] = Resources.Load<Sprite>("Materials/Android-S");
-		sprite[1,2] = Resources.Load<Sprite>("Materials/Android2-S");
-		sprite[0,3] = Resources.Load<Sprite>("Materials/Android-W");
-		sprite[1,3] = Resources.Load<Sprite>("Materials/Android2-W");*/
+		sprite[0] = Resources.Load<Sprite>("Materials/Android");
+		sprite[1] = Resources.Load<Sprite>("Materials/Android2");
 	}
 
-	enum direction{
+	public enum direction{
 		North,
 		East,
 		South,

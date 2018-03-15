@@ -72,11 +72,21 @@ public class Grid{
 	}
 
 	public gridPos getRandomEmptyCell(){
-		gridPos position = new gridPos(Random.Range(1,columnsNumber-1),Random.Range(1,linesNumber-1));
-		while (grid[position.X,position.Y] != null){
-			position = new gridPos(Random.Range(1,columnsNumber-1),Random.Range(1,linesNumber-1));
-		}
-		return position;
+		return getRandomEmptyCell(new List<gridPos>());
+	}
+
+	public gridPos getRandomEmptyCell(List<gridPos> ignoredPositions){
+		List<gridPos> acceptedPositions = new List<gridPos>();
+		bool[,] ignoredPositionsGrid = new bool[columnsNumber, linesNumber];
+
+		for (int i=0;i<ignoredPositions.Count;i++)
+			ignoredPositionsGrid[ignoredPositions[i].X,ignoredPositions[i].Y] = true;
+
+		for (int i=0;i<columnsNumber;i++)
+			for (int j=0;j<linesNumber;j++)
+				if (grid[i,j]==null && !ignoredPositionsGrid[i,j])
+					acceptedPositions.Add(new gridPos(i,j));
+		return acceptedPositions[Random.Range(1,acceptedPositions.Count)];
 	}
 
 	public void setWidth(int width){
@@ -133,9 +143,27 @@ public class Grid{
 			Y = _Y;
 		}
 
+		public static List<gridPos> getRange(gridPos A,gridPos B){
+			List<gridPos> ans = new List<gridPos>();
+
+			for (int X = A.X; X <= B.X; X++)
+				for (int Y = A.Y; Y <= B.Y; Y++)
+					ans.Add(new gridPos(X,Y));
+			
+			return ans;
+		}
+
 		public override string ToString()
 		{
 			return string.Format("({0}, {1})", X, Y);
+		}
+
+		public static gridPos operator+(gridPos A, gridPos B){
+			return new gridPos(A.X + B.X, A.Y + B.Y);
+		}
+
+		public static gridPos operator-(gridPos A,gridPos B){
+			return new gridPos(A.X - B.X, A.Y - B.Y);
 		}
 
 		public static bool operator==(gridPos A, gridPos B)
